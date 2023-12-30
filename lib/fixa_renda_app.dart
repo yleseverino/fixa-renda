@@ -1,3 +1,4 @@
+import 'package:fixa_renda/ui/help/help_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/selic/api/selic_service.dart';
@@ -97,6 +98,7 @@ class FixaRendaApp extends StatelessWidget {
             textTheme: textScheme),
         home: const MyHomePage(),
         routes: <String, WidgetBuilder>{
+          HelpScreen.routeName: (BuildContext context) => const HelpScreen(),
           InvestmentItemEntryScreen.routeName: (BuildContext context) =>
               const InvestmentItemEntryScreen(),
         },

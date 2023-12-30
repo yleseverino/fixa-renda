@@ -1,3 +1,4 @@
+import 'package:fixa_renda/ui/help/help_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
@@ -36,6 +37,17 @@ class MyHomePage extends StatelessWidget {
       builder: (context, _) => Scaffold(
         appBar: AppBar(
           title: const Text('Investimentos'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, HelpScreen.routeName);
+              },
+              icon: Icon(
+                Icons.help_outline,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
