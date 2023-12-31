@@ -1,4 +1,5 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:fixa_renda/util/datetime_extension.dart';
 import 'package:fixa_renda/util/string_extension.dart';
 import 'package:fixa_renda/util/num_extension.dart';
@@ -10,6 +11,7 @@ class InvestmentItemContent extends StatefulWidget {
     required DateTime date,
     required num valueInvested,
     required num interestRate,
+    required InvestmentIncomeType incomeType,
   }) onSave;
 
   final void Function()? onRemove;
@@ -18,6 +20,7 @@ class InvestmentItemContent extends StatefulWidget {
   final DateTime? date;
   final num? valueInvested;
   final num? interestRate;
+  final InvestmentIncomeType? incomeType;
 
   const InvestmentItemContent(
       {super.key,
@@ -26,7 +29,8 @@ class InvestmentItemContent extends StatefulWidget {
       this.date,
       this.valueInvested,
       this.interestRate,
-      this.onRemove});
+      this.onRemove,
+      this.incomeType});
 
   @override
   State<InvestmentItemContent> createState() => _InvestmentItemContentState();
@@ -35,13 +39,16 @@ class InvestmentItemContent extends StatefulWidget {
 class _InvestmentItemContentState extends State<InvestmentItemContent> {
   late DateTime selectedDate = widget.date ?? DateTime.now();
 
+  late InvestmentIncomeType dropdownValue =
+      widget.incomeType ?? InvestmentIncomeType.posFixed;
+
   final _formKey = GlobalKey<FormState>();
 
   late final _titleController = TextEditingController(text: widget.name);
   late final _investedValueController =
       TextEditingController(text: widget.valueInvested?.toCurrency());
   late final _rateController =
-      TextEditingController(text: widget.interestRate?.toInt().toString());
+      TextEditingController(text: widget.interestRate?.toBrFormat().toString());
   late final _dateController = TextEditingController(
       text: widget.date?.toBRDate() ?? DateTime.now().toBRDate());
 
@@ -109,9 +116,12 @@ class _InvestmentItemContentState extends State<InvestmentItemContent> {
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Porcentagem CDI',
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText:
+                            InvestmentIncomeType.posFixed == dropdownValue
+                                ? 'Porcentagem CDI'
+                                : 'Porcentagem de rendimento',
                       ),
                     ),
                   ),
@@ -132,6 +142,45 @@ class _InvestmentItemContentState extends State<InvestmentItemContent> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Data da aplicação',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: DropdownButton<InvestmentIncomeType>(
+                            value: dropdownValue,
+                            underline: Container(),
+                            isExpanded: true,
+                            elevation: 0,
+                            onChanged: (InvestmentIncomeType? value) {
+                              setState(() {
+                                dropdownValue = value!;
+                              });
+                            },
+                            items: InvestmentIncomeType.values
+                                .map<DropdownMenuItem<InvestmentIncomeType>>(
+                                    (InvestmentIncomeType value) {
+                              return DropdownMenuItem<InvestmentIncomeType>(
+                                value: value,
+                                child: Text(
+                                  value.description,
+                                  style: Theme.of(context).textTheme!.bodyLarge,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -166,6 +215,7 @@ class _InvestmentItemContentState extends State<InvestmentItemContent> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         widget.onSave(
+                            incomeType: dropdownValue,
                             name: _titleController.text,
                             date: selectedDate,
                             valueInvested: _investedValueController.text

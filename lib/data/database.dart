@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:floor/floor.dart';
 import 'package:fixa_renda/data/selic/selic_dao.dart';
 import 'package:fixa_renda/data/selic/selic_entity.dart';
@@ -11,7 +12,7 @@ import 'package:fixa_renda/data/investment/investment_entity.dart';
 part 'database.g.dart';
 
 @Database(
-  version: 1,
+  version: 2,
   entities: [Investment, Selic],
 )
 abstract class AppDatabase extends FloorDatabase {

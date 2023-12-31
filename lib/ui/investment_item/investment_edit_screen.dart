@@ -1,4 +1,5 @@
 import 'package:fixa_renda/data/database.dart';
+import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
 import 'package:fixa_renda/data/investment/investment_entity.dart';
 import 'package:fixa_renda/data/selic/api/selic_service.dart';
@@ -73,6 +74,7 @@ class _InvestmentItemEditScreenState extends State<InvestmentItemEditScreen> {
                   interestRate: investmentItem.interestRate,
                   date: investmentItem.date,
                   name: investmentItem.name,
+                  incomeType: investmentItem.incomeType,
                   onRemove: () {
                     context
                         .read<InvestmentEditViewModel>()
@@ -84,13 +86,15 @@ class _InvestmentItemEditScreenState extends State<InvestmentItemEditScreen> {
                       {required String name,
                       required DateTime date,
                       required num valueInvested,
-                      required num interestRate}) {
+                      required num interestRate,
+                      required InvestmentIncomeType incomeType}) {
                     context
                         .read<InvestmentEditViewModel>()
                         .updateInvestmentItem(Investment(
                             id: investmentId,
                             name: name,
                             investedAmount: valueInvested.toDouble(),
+                            incomeType: incomeType,
                             interestRate: interestRate.toDouble(),
                             date: date));
 

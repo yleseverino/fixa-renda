@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:fixa_renda/data/investment/exceptions/selic_rate_not_found.dart';
 import 'package:fixa_renda/data/investment/investment_dao.dart';
 import 'package:fixa_renda/data/investment/investment_entity.dart';
@@ -49,11 +50,28 @@ class InvestmentRepository {
         name: name,
         investedAmount: valueInvested.toDouble(),
         interestRate: interestRate.toDouble(),
+        incomeType: InvestmentIncomeType.posFixed,
         date: date));
   }
 
   Future<double> getInvestmentProfit(Investment investment) async {
+    if (investment.incomeType == InvestmentIncomeType.preFixed) {
+      return _preFixateInvestiment(investment);
+    }
     return await _posFixateInvestiment(investment);
+  }
+
+  double _preFixateInvestiment(Investment investment) {
+    final rateByDay =
+        (pow((1 + (investment.interestRate / 100)), (1 / 252)) - 1);
+
+    print(rateByDay * 100);
+    final period =
+        (DateTime.now().difference(investment.date).inDays * (252 / 365))
+            .toInt();
+
+    final futureValue = investment.investedAmount * pow(1 + rateByDay, period);
+    return futureValue - investment.investedAmount;
   }
 
   Future<double> _posFixateInvestiment(Investment investment) async {

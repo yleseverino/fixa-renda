@@ -71,7 +71,7 @@ class _$AppDatabase extends AppDatabase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -87,7 +87,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Investment` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `investedAmount` REAL NOT NULL, `interestRate` REAL NOT NULL, `date` INTEGER NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Investment` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `investedAmount` REAL NOT NULL, `interestRate` REAL NOT NULL, `date` INTEGER NOT NULL, `incomeType` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Selic` (`date` INTEGER NOT NULL, `value` REAL NOT NULL, PRIMARY KEY (`date`))');
 
@@ -121,7 +121,8 @@ class _$InvestmentDao extends InvestmentDao {
                   'name': item.name,
                   'investedAmount': item.investedAmount,
                   'interestRate': item.interestRate,
-                  'date': _dateTimeConverter.encode(item.date)
+                  'date': _dateTimeConverter.encode(item.date),
+                  'incomeType': item.incomeType.index
                 },
             changeListener),
         _investmentUpdateAdapter = UpdateAdapter(
@@ -133,7 +134,8 @@ class _$InvestmentDao extends InvestmentDao {
                   'name': item.name,
                   'investedAmount': item.investedAmount,
                   'interestRate': item.interestRate,
-                  'date': _dateTimeConverter.encode(item.date)
+                  'date': _dateTimeConverter.encode(item.date),
+                  'incomeType': item.incomeType.index
                 },
             changeListener),
         _investmentDeletionAdapter = DeletionAdapter(
@@ -145,7 +147,8 @@ class _$InvestmentDao extends InvestmentDao {
                   'name': item.name,
                   'investedAmount': item.investedAmount,
                   'interestRate': item.interestRate,
-                  'date': _dateTimeConverter.encode(item.date)
+                  'date': _dateTimeConverter.encode(item.date),
+                  'incomeType': item.incomeType.index
                 },
             changeListener);
 
@@ -169,7 +172,8 @@ class _$InvestmentDao extends InvestmentDao {
             name: row['name'] as String,
             investedAmount: row['investedAmount'] as double,
             interestRate: row['interestRate'] as double,
-            date: _dateTimeConverter.decode(row['date'] as int)),
+            date: _dateTimeConverter.decode(row['date'] as int),
+            incomeType: InvestmentIncomeType.values[row['incomeType'] as int]),
         queryableName: 'Investment',
         isView: false);
   }
@@ -182,7 +186,8 @@ class _$InvestmentDao extends InvestmentDao {
             name: row['name'] as String,
             investedAmount: row['investedAmount'] as double,
             interestRate: row['interestRate'] as double,
-            date: _dateTimeConverter.decode(row['date'] as int)),
+            date: _dateTimeConverter.decode(row['date'] as int),
+            incomeType: InvestmentIncomeType.values[row['incomeType'] as int]),
         arguments: [id],
         queryableName: 'Investment',
         isView: false);

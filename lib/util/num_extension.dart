@@ -8,4 +8,8 @@ extension InvestNum on num {
       decimalDigits: decimalDigits,
     ).format(this);
   }
+
+  String toBrFormat() {
+    return toString().replaceAll('.', ',');
+  }
 }

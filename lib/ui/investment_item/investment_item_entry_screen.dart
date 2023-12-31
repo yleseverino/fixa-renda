@@ -7,6 +7,8 @@ import 'package:fixa_renda/ui/investment_item/investment_item_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/investment/enum/investment_income_type.dart';
+
 class InvestmentItemEntryScreen extends StatefulWidget {
   static const routeName = 'investment-item-entry';
 
@@ -46,7 +48,8 @@ class _InvestmentItemEntryScreenState extends State<InvestmentItemEntryScreen> {
               {required String name,
               required DateTime date,
               required num valueInvested,
-              required num interestRate}) {
+              required num interestRate,
+              required InvestmentIncomeType incomeType}) {
             context.read<InvestmentItemViewModel>().createInvestmentItem(
                 name: name,
                 date: date,

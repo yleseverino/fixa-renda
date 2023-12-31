@@ -1,3 +1,4 @@
+import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:fixa_renda/data/investment/investment_dao.dart';
 import 'package:fixa_renda/data/investment/investment_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,12 +22,14 @@ void main() {
         id: null,
         name: "Teste 1",
         investedAmount: 100,
+        incomeType: InvestmentIncomeType.posFixed,
         interestRate: 10,
         date: DateTime.now()));
 
     await investmentDao.insertInvestment(Investment(
         id: null,
         name: "Teste 2",
+        incomeType: InvestmentIncomeType.posFixed,
         investedAmount: 100,
         interestRate: 10,
         date: DateTime.now()));
@@ -51,6 +54,7 @@ void main() {
         id: 1,
         name: "Teste 1",
         investedAmount: 100,
+        incomeType: InvestmentIncomeType.posFixed,
         interestRate: 10,
         date: DateTime.now()));
 
