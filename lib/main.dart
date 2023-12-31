@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fixa_renda/data/investment/investment_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/selic/api/selic_service.dart';

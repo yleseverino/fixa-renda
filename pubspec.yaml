@@ -47,6 +47,7 @@ dependencies:
   google_fonts: ^6.1.0
 
 dev_dependencies:
+  sqflite_common_ffi:
   flutter_test:
     sdk: flutter
 

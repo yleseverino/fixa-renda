@@ -1,4 +1,5 @@
 import 'package:fixa_renda/ui/help/help_screen.dart';
+import 'package:fixa_renda/ui/investment_item/investment_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
@@ -58,10 +59,10 @@ class MyHomePage extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   }
-                  //
-                  // if (snapshot.hasError) {
-                  //   return Text('Erro ao carregar investimentos');
-                  // }
+
+                  if (snapshot.hasError) {
+                    return const Text('Erro ao carregar investimentos');
+                  }
 
                   if (snapshot.data!.isEmpty) {
                     return const Center(
@@ -75,10 +76,17 @@ class MyHomePage extends StatelessWidget {
                           .map((investment) => Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
-                                child: InvestmentCard(
-                                  title: investment.name,
-                                  investedValue: investment.valueInvested,
-                                  grossIncome: investment.profit,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context,
+                                        InvestmentItemEditScreen.routeName,
+                                        arguments: investment.id);
+                                  },
+                                  child: InvestmentCard(
+                                    title: investment.name,
+                                    investedValue: investment.valueInvested,
+                                    grossIncome: investment.profit,
+                                  ),
                                 ),
                               ))
                           .toList()

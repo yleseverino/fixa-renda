@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: library_private_types_in_public_api, override_on_non_overriding_member
-
 part of 'database.dart';
 
 // **************************************************************************
@@ -125,6 +123,30 @@ class _$InvestmentDao extends InvestmentDao {
                   'interestRate': item.interestRate,
                   'date': _dateTimeConverter.encode(item.date)
                 },
+            changeListener),
+        _investmentUpdateAdapter = UpdateAdapter(
+            database,
+            'Investment',
+            ['id'],
+            (Investment item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'investedAmount': item.investedAmount,
+                  'interestRate': item.interestRate,
+                  'date': _dateTimeConverter.encode(item.date)
+                },
+            changeListener),
+        _investmentDeletionAdapter = DeletionAdapter(
+            database,
+            'Investment',
+            ['id'],
+            (Investment item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'investedAmount': item.investedAmount,
+                  'interestRate': item.interestRate,
+                  'date': _dateTimeConverter.encode(item.date)
+                },
             changeListener);
 
   final sqflite.DatabaseExecutor database;
@@ -134,6 +156,10 @@ class _$InvestmentDao extends InvestmentDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<Investment> _investmentInsertionAdapter;
+
+  final UpdateAdapter<Investment> _investmentUpdateAdapter;
+
+  final DeletionAdapter<Investment> _investmentDeletionAdapter;
 
   @override
   Stream<List<Investment>> getInvestments() {
@@ -150,7 +176,7 @@ class _$InvestmentDao extends InvestmentDao {
 
   @override
   Stream<Investment?> findInvestmentById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM Investment id = ?1',
+    return _queryAdapter.queryStream('SELECT * FROM Investment WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Investment(
             id: row['id'] as int?,
             name: row['name'] as String,
@@ -166,6 +192,16 @@ class _$InvestmentDao extends InvestmentDao {
   Future<void> insertInvestment(Investment investment) async {
     await _investmentInsertionAdapter.insert(
         investment, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateInvestment(Investment investment) async {
+    await _investmentUpdateAdapter.update(investment, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteInvestment(Investment investment) async {
+    await _investmentDeletionAdapter.delete(investment);
   }
 }
 
@@ -208,25 +244,6 @@ class _$SelicDao extends SelicDao {
   Future<int?> getLastDate() async {
     return _queryAdapter.query('SELECT MAX(date) FROM Selic',
         mapper: (Map<String, Object?> row) => row.values.first as int);
-  }
-
-  @override
-  Stream<int?> getCountDaysStream(DateTime date) {
-    return _queryAdapter.queryStream(
-        'SELECT COUNT(date) FROM Selic WHERE date >= ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as int,
-        arguments: [_dateTimeConverter.encode(date)],
-        queryableName: 'Selic',
-        isView: false);
-  }
-
-  Stream<double?> getSelicAverageStream(DateTime date) {
-    return _queryAdapter.queryStream(
-        'SELECT AVG(value) FROM Selic WHERE date >= ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as double,
-        arguments: [_dateTimeConverter.encode(date)],
-        queryableName: 'Selic',
-        isView: false);
   }
 
   @override

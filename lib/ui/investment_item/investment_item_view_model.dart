@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
 
 class InvestmentItemViewModel {

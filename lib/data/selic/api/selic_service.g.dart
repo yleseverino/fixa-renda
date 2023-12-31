@@ -33,7 +33,7 @@ class _SelicService implements SelicService {
       r'formato': format,
     };
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result =
         await _dio.fetch<List<dynamic>>(_setStreamType<List<SelicDTO>>(Options(
       method: 'GET',

@@ -30,6 +30,14 @@ class InvestmentRepository {
     }
   }
 
+  Future<void> update(Investment investment) async {
+    return await _investmentDao.updateInvestment(investment);
+  }
+
+  Future<void> delete(Investment investment) async {
+    return await _investmentDao.deleteInvestment(investment);
+  }
+
   Future<void> insert({
     required String name,
     required num valueInvested,
@@ -45,6 +53,10 @@ class InvestmentRepository {
   }
 
   Future<double> getInvestmentProfit(Investment investment) async {
+    return await _posFixateInvestiment(investment);
+  }
+
+  Future<double> _posFixateInvestiment(Investment investment) async {
     try {
       final selicRate = await getSelicRate(investment.date);
       final investimentRate =
@@ -72,5 +84,9 @@ class InvestmentRepository {
       countDays: countDays,
       averageRate: averageRate,
     );
+  }
+
+  Stream<Investment?> findInvestmentById(int id) {
+    return _investmentDao.findInvestmentById(id);
   }
 }

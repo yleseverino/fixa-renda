@@ -1,4 +1,6 @@
 import 'package:fixa_renda/ui/help/help_screen.dart';
+import 'package:fixa_renda/ui/investment_item/investment_edit_screen.dart';
+import 'package:fixa_renda/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/selic/api/selic_service.dart';
@@ -28,76 +30,12 @@ class FixaRendaApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: lightColorScheme,
-            cardTheme: const CardTheme(
-              shape: BeveledRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12)),
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<BeveledRectangleBorder>(
-                    const BeveledRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(12),
-                      bottomLeft: Radius.circular(12)),
-                )),
-              ),
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              hintStyle: Theme.of(context).textTheme.bodyMedium!,
-            ),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<BeveledRectangleBorder>(
-                    const BeveledRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(12),
-                      bottomLeft: Radius.circular(12)),
-                )),
-              ),
-            ),
-            textTheme: textScheme),
-        darkTheme: ThemeData(
-            useMaterial3: true,
-            cardTheme: const CardTheme(
-              shape: BeveledRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12)),
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<BeveledRectangleBorder>(
-                    const BeveledRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(12),
-                      bottomLeft: Radius.circular(12)),
-                )),
-              ),
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              hintStyle: Theme.of(context).textTheme.bodyMedium!,
-            ),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<BeveledRectangleBorder>(
-                    const BeveledRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(12),
-                      bottomLeft: Radius.circular(12)),
-                )),
-              ),
-            ),
-            colorScheme: darkColorScheme,
-            textTheme: textScheme),
+        theme: getThemeData(context, false),
+        darkTheme: getThemeData(context, true),
         home: const MyHomePage(),
         routes: <String, WidgetBuilder>{
+          InvestmentItemEditScreen.routeName: (BuildContext context) =>
+              const InvestmentItemEditScreen(),
           HelpScreen.routeName: (BuildContext context) => const HelpScreen(),
           InvestmentItemEntryScreen.routeName: (BuildContext context) =>
               const InvestmentItemEntryScreen(),
