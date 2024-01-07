@@ -9,7 +9,7 @@ abstract class SelicService {
   factory SelicService(Dio dio, {String baseUrl}) = _SelicService;
 
   @GET('/dados')
-  Future<List<SelicDTO>> getSelicAverage({
+  Future<List<SelicDTO>> getSelicFromCentralBank({
     @Query('dataInicial') required String startDate,
     @Query('dataFinal') required String endDate,
     @Query('formato') String format = 'json',

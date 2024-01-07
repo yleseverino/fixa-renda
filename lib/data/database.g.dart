@@ -65,13 +65,15 @@ class _$AppDatabase extends AppDatabase {
 
   SelicDao? _selicDaoInstance;
 
+  SelicForecastDao? _selicForecastDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -90,6 +92,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `Investment` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `investedAmount` REAL NOT NULL, `interestRate` REAL NOT NULL, `date` INTEGER NOT NULL, `incomeType` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Selic` (`date` INTEGER NOT NULL, `value` REAL NOT NULL, PRIMARY KEY (`date`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `SelicForecast` (`id` INTEGER, `meeting` TEXT NOT NULL, `date` INTEGER NOT NULL, `median` REAL NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -105,6 +109,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   SelicDao get selicDao {
     return _selicDaoInstance ??= _$SelicDao(database, changeListener);
+  }
+
+  @override
+  SelicForecastDao get selicForecastDao {
+    return _selicForecastDaoInstance ??=
+        _$SelicForecastDao(database, changeListener);
   }
 }
 
@@ -122,7 +132,8 @@ class _$InvestmentDao extends InvestmentDao {
                   'investedAmount': item.investedAmount,
                   'interestRate': item.interestRate,
                   'date': _dateTimeConverter.encode(item.date),
-                  'incomeType': item.incomeType.index
+                  'incomeType':
+                      _investmentIncomeTypeConverter.encode(item.incomeType)
                 },
             changeListener),
         _investmentUpdateAdapter = UpdateAdapter(
@@ -135,7 +146,8 @@ class _$InvestmentDao extends InvestmentDao {
                   'investedAmount': item.investedAmount,
                   'interestRate': item.interestRate,
                   'date': _dateTimeConverter.encode(item.date),
-                  'incomeType': item.incomeType.index
+                  'incomeType':
+                      _investmentIncomeTypeConverter.encode(item.incomeType)
                 },
             changeListener),
         _investmentDeletionAdapter = DeletionAdapter(
@@ -148,7 +160,8 @@ class _$InvestmentDao extends InvestmentDao {
                   'investedAmount': item.investedAmount,
                   'interestRate': item.interestRate,
                   'date': _dateTimeConverter.encode(item.date),
-                  'incomeType': item.incomeType.index
+                  'incomeType':
+                      _investmentIncomeTypeConverter.encode(item.incomeType)
                 },
             changeListener);
 
@@ -173,7 +186,8 @@ class _$InvestmentDao extends InvestmentDao {
             investedAmount: row['investedAmount'] as double,
             interestRate: row['interestRate'] as double,
             date: _dateTimeConverter.decode(row['date'] as int),
-            incomeType: InvestmentIncomeType.values[row['incomeType'] as int]),
+            incomeType: _investmentIncomeTypeConverter
+                .decode(row['incomeType'] as int)),
         queryableName: 'Investment',
         isView: false);
   }
@@ -187,7 +201,8 @@ class _$InvestmentDao extends InvestmentDao {
             investedAmount: row['investedAmount'] as double,
             interestRate: row['interestRate'] as double,
             date: _dateTimeConverter.decode(row['date'] as int),
-            incomeType: InvestmentIncomeType.values[row['incomeType'] as int]),
+            incomeType: _investmentIncomeTypeConverter
+                .decode(row['incomeType'] as int)),
         arguments: [id],
         queryableName: 'Investment',
         isView: false);
@@ -265,5 +280,66 @@ class _$SelicDao extends SelicDao {
   }
 }
 
+class _$SelicForecastDao extends SelicForecastDao {
+  _$SelicForecastDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
+        _selicForecastInsertionAdapter = InsertionAdapter(
+            database,
+            'SelicForecast',
+            (SelicForecast item) => <String, Object?>{
+                  'id': item.id,
+                  'meeting': _meetingModelTypeConverter.encode(item.meeting),
+                  'date': _dateTimeConverter.encode(item.date),
+                  'median': item.median
+                },
+            changeListener);
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<SelicForecast> _selicForecastInsertionAdapter;
+
+  @override
+  Future<double?> getSelicAverage(String meeting) async {
+    return _queryAdapter.query(
+        'SELECT * from SelicForecast sf where meeting = ?1 order by date desc limit 1',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [meeting]);
+  }
+
+  @override
+  Stream<List<SelicForecast>> getLastForecastByMeeting() {
+    return _queryAdapter.queryListStream(
+        'SELECT * from selic_forecast sf where date = (SELECT max(date) as maxDate from  selic_forecast) group by meeting',
+        mapper: (Map<String, Object?> row) => SelicForecast(
+            id: row['id'] as int?,
+            meeting:
+                _meetingModelTypeConverter.decode(row['meeting'] as String),
+            date: _dateTimeConverter.decode(row['date'] as int),
+            median: row['median'] as double),
+        queryableName: 'selic_forecast',
+        isView: false);
+  }
+
+  @override
+  Future<int?> getLastDate() async {
+    return _queryAdapter.query('SELECT max(date) from SelicForecast sf',
+        mapper: (Map<String, Object?> row) => row.values.first as int);
+  }
+
+  @override
+  Future<void> insertSelic(SelicForecast selic) async {
+    await _selicForecastInsertionAdapter.insert(
+        selic, OnConflictStrategy.replace);
+  }
+}
+
 // ignore_for_file: unused_element
 final _dateTimeConverter = DateTimeConverter();
+final _investmentIncomeTypeConverter = InvestmentIncomeTypeConverter();
+final _meetingModelTypeConverter = MeetingModelTypeConverter();

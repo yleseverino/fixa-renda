@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fixa_renda/data/investment/investment_entity.dart';
 import 'package:fixa_renda/data/migrations/migration12.dart';
+import 'package:fixa_renda/data/selic_forecast/api/selic_forecast_service.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
@@ -16,9 +17,11 @@ Future<void> main() async {
 
   final dio = Dio();
   final selicService = SelicService(dio);
+  final selicForecastService = SelicForecastService(dio);
 
   runApp(FixaRendaApp(
     appDatabase: database,
     selicService: selicService,
+    selicForecastService: selicForecastService,
   ));
 }

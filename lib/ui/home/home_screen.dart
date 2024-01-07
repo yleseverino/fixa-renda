@@ -1,5 +1,9 @@
+import 'package:fixa_renda/data/selic_forecast/api/selic_forecast_service.dart';
+import 'package:fixa_renda/data/selic_forecast/selic_forecast_repository.dart';
 import 'package:fixa_renda/ui/help/help_screen.dart';
+import 'package:fixa_renda/ui/home/components/forecast_selic_graph.dart';
 import 'package:fixa_renda/ui/investment_item/investment_edit_screen.dart';
+import 'package:fixa_renda/util/datetime_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
@@ -30,14 +34,24 @@ class MyHomePage extends StatelessWidget {
               selicRepository:
                   Provider.of<SelicRepository>(context, listen: false)),
         ),
+        Provider<SelicForecastRepository>(
+          create: (context) => SelicForecastRepository(
+              selicForecastDao: Provider.of<AppDatabase>(context, listen: false)
+                  .selicForecastDao,
+              forecastService:
+                  Provider.of<SelicForecastService>(context, listen: false)),
+        ),
         Provider<HomeViewModel>(
             create: (context) => HomeViewModel(
+                selicForecastRepository: Provider.of<SelicForecastRepository>(
+                    context,
+                    listen: false),
                 investmentRepository:
                     Provider.of<InvestmentRepository>(context, listen: false))),
       ],
       builder: (context, _) => Scaffold(
         appBar: AppBar(
-          title: const Text('Investimentos'),
+          // title: const Text('Investimentos'),
           actions: [
             IconButton(
               onPressed: () {
@@ -52,47 +66,80 @@ class MyHomePage extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: StreamBuilder(
-                stream: context.read<HomeViewModel>().investments,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  }
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Previsão da taxa Selic',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        LineChartSample2(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Copom (${DateTime.now().toBRDate()})',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                StreamBuilder(
+                    stream: context.read<HomeViewModel>().investments,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
 
-                  if (snapshot.hasError) {
-                    return const Text('Erro ao carregar investimentos');
-                  }
+                      if (snapshot.hasError) {
+                        return const Text('Erro ao carregar investimentos');
+                      }
 
-                  if (snapshot.data!.isEmpty) {
-                    return const Center(
-                        child: Text('Nenhum investimento cadastrado'));
-                  }
+                      if (snapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('Nenhum investimento cadastrado'));
+                      }
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ...snapshot.data!
-                          .map((investment) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context,
-                                        InvestmentItemEditScreen.routeName,
-                                        arguments: investment.id);
-                                  },
-                                  child: InvestmentCard(
-                                    title: investment.name,
-                                    investedValue: investment.valueInvested,
-                                    grossIncome: investment.profit,
-                                  ),
-                                ),
-                              ))
-                          .toList()
-                    ],
-                  );
-                }),
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          ...snapshot.data!
+                              .map((investment) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(context,
+                                            InvestmentItemEditScreen.routeName,
+                                            arguments: investment.id);
+                                      },
+                                      child: InvestmentCard(
+                                        title: investment.name,
+                                        investedValue: investment.valueInvested,
+                                        grossIncome: investment.profit,
+                                      ),
+                                    ),
+                                  ))
+                              .toList()
+                        ],
+                      );
+                    }),
+              ],
+            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(

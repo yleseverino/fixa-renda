@@ -53,7 +53,7 @@ class SelicRepository {
     final today = DateTime.now();
     final formatDate = DateFormat('dd/MM/yyyy');
 
-    final selicListDto = await _selicService.getSelicAverage(
+    final selicListDto = await _selicService.getSelicFromCentralBank(
         startDate: formatDate.format(lastDateSelic),
         endDate: formatDate.format(today));
 

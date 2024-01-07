@@ -1,3 +1,4 @@
+import 'package:fixa_renda/data/selic_forecast/api/selic_forecast_service.dart';
 import 'package:fixa_renda/ui/help/help_screen.dart';
 import 'package:fixa_renda/ui/investment_item/investment_edit_screen.dart';
 import 'package:fixa_renda/ui/theme/theme.dart';
@@ -6,16 +7,15 @@ import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/selic/api/selic_service.dart';
 import 'package:fixa_renda/ui/home/home_screen.dart';
 import 'package:fixa_renda/ui/investment_item/investment_item_entry_screen.dart';
-import 'package:fixa_renda/ui/theme/color_schemes.g.dart';
-import 'package:fixa_renda/ui/theme/type_scheme.dart';
 import 'package:provider/provider.dart';
 
 class FixaRendaApp extends StatelessWidget {
   final AppDatabase appDatabase;
   final SelicService selicService;
+  final SelicForecastService selicForecastService;
 
   const FixaRendaApp(
-      {super.key, required this.appDatabase, required this.selicService});
+      {super.key, required this.appDatabase, required this.selicService, required this.selicForecastService});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +26,9 @@ class FixaRendaApp extends StatelessWidget {
         ),
         Provider<SelicService>(
           create: (context) => selicService,
+        ),        
+        Provider<SelicForecastService>(
+          create: (context) => selicForecastService,
         ),
       ],
       child: MaterialApp(
