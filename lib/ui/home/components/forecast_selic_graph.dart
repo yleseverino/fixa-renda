@@ -14,7 +14,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
     Theme.of(context).colorScheme.secondary,
   ];
 
-  bool showAvg = false;
+
+  double touchedValue = - 1;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
               bottom: 12,
             ),
             child: LineChart(
-              showAvg ? avgData() : mainData(),
+               // mainData(),
+                avgData()
             ),
           ),
         ),
@@ -88,12 +90,12 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   LineChartData mainData() {
     return LineChartData(
+
       gridData: FlGridData(
         show: false,
       ),
       titlesData: FlTitlesData(
         show: true,
-
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
@@ -160,24 +162,99 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   LineChartData avgData() {
     return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
+      lineTouchData: LineTouchData(
+        getTouchedSpotIndicator:
+            (LineChartBarData barData, List<int> spotIndexes) {
+          return spotIndexes.map((spotIndex) {
+            return TouchedSpotIndicatorData(
+              FlLine(
+                color: Theme.of(context).colorScheme.secondary,
+                strokeWidth: 4,
+              ),
+              FlDotData(
+                getDotPainter: (spot, percent, barData, index) {
+
+                    return FlDotSquarePainter(
+                      size: 16,
+                      color: Colors.white,
+                      strokeWidth: 5,
+                      strokeColor:
+                      Theme.of(context).colorScheme.secondary,
+                    );
+                  }
+
+              ),
+            );
+          }).toList();
+        },
+        touchTooltipData: LineTouchTooltipData(
+          tooltipBgColor: Theme.of(context).colorScheme.tertiaryContainer,
+          getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+            return touchedBarSpots.map((barSpot) {
+              final flSpot = barSpot;
+
+              TextAlign textAlign;
+              switch (flSpot.x.toInt()) {
+                case 1:
+                  textAlign = TextAlign.left;
+                  break;
+                case 5:
+                  textAlign = TextAlign.right;
+                  break;
+                default:
+                  textAlign = TextAlign.center;
+              }
+
+              return LineTooltipItem(
+                'Selic atual\n',
+                TextStyle(
+                  color: Theme.of(context).colorScheme.onTertiaryContainer,
+
+                ),
+                children: [
+                  TextSpan(
+                    text: flSpot.y.toString() + ' %',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onTertiaryContainer,
+
+                    ),
+                  ),
+
+                ],
+                textAlign: textAlign,
+              );
+            }).toList();
+          },
+        ),
+        touchCallback:
+            (FlTouchEvent event, LineTouchResponse? lineTouch) {
+          if (!event.isInterestedForInteractions ||
+              lineTouch == null ||
+              lineTouch.lineBarSpots == null) {
+            setState(() {
+              touchedValue = -1;
+            });
+            return;
+          }
+          final value = lineTouch.lineBarSpots![0].x;
+
+          setState(() {
+            touchedValue = value;
+          });
+        },
+      ),
+      extraLinesData: ExtraLinesData(
+        horizontalLines: [
+          HorizontalLine(
+            y: 1.8,
+            color: Theme.of(context).colorScheme.tertiary,
+            strokeWidth: 3,
+            dashArray: [20, 10],
+          ),
+        ],
+      ),
       gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
+        show: false,
       ),
       titlesData: FlTitlesData(
         show: true,
@@ -205,53 +282,57 @@ class _LineChartSample2State extends State<LineChartSample2> {
         ),
       ),
       borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
+        show: false,
       ),
       minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
+      maxX: 8,
+      minY: 7.5,
+      maxY: 12,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
+          isStepLineChart: true,
+          spots: [11.75,11.25,10.75,10.25,9.75,9.25,9.0,8.75, 8.5].asMap().entries.map((e) {
+            return FlSpot(e.key.toDouble(), e.value);
+          }).toList(),
+          isCurved: false,
+          barWidth: 4,
+          color: Theme.of(context).colorScheme.tertiary,
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
               colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
+                Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                Theme.of(context).colorScheme.tertiary.withOpacity(0),
               ],
+              stops: const [0.5, 1.0],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
+            spotsLine: BarAreaSpotsLine(
+              show: true,
+              flLineStyle: FlLine(
+                color: Theme.of(context).colorScheme.secondary,
+                strokeWidth: 2,
+              ),
+
+            ),
+          ),
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) {
+                return FlDotSquarePainter(
+                  size: 12,
+                  color: Colors.white,
+                  strokeWidth: 3,
+                  strokeColor: Theme.of(context).colorScheme.secondary,
+                );
+            },
+
           ),
         ),
       ],
+
+
     );
   }
 }
