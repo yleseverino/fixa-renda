@@ -23,19 +23,28 @@ class SelicForecastDto {
   final DateTime Data;
   final String Reuniao;
   final double Mediana;
+  final int baseCalculo;
 
-  SelicForecastDto({required this.Data, required this.Reuniao, required this.Mediana});
+  SelicForecastDto(
+      {required this.Data,
+      required this.Reuniao,
+      required this.Mediana,
+      required this.baseCalculo});
 
   factory SelicForecastDto.fromJson(Map<String, dynamic> json) =>
       _$SelicForecastDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$SelicForecastDtoToJson(this);
 
+  int get meeting => int.parse(Reuniao.split('/')[0].replaceAll('R', ''));
+  int get meetingYear => int.parse(Reuniao.split('/')[1]);
+
   SelicForecast toEntity() {
     return SelicForecast(
       id: null,
       date: Data,
-      meeting: MeetingModelTypeConverter().decode(Reuniao),
+      meeting: MeetingModel.fromApi(Reuniao),
+      baseCalculo: baseCalculo,
       median: Mediana,
     );
   }

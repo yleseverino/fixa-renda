@@ -15,7 +15,7 @@ abstract class SelicForecastService {
   @GET('')
   Future<SelicForecastListDto> getSelicForecastFromCentralBank({
     @Query('filter') String? filter,
-    @Query('\$select') String select = 'Data,Reuniao,Mediana',
+    @Query('\$select') String select = 'Data,Reuniao,Mediana,baseCalculo',
     @Query('\$format') String format = 'json',
     @Query('\$top') String top = '100',
   });

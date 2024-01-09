@@ -73,7 +73,7 @@ class _$AppDatabase extends AppDatabase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 3,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -93,7 +93,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Selic` (`date` INTEGER NOT NULL, `value` REAL NOT NULL, PRIMARY KEY (`date`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `SelicForecast` (`id` INTEGER, `meeting` TEXT NOT NULL, `date` INTEGER NOT NULL, `median` REAL NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `SelicForecast` (`id` INTEGER, `meeting` TEXT NOT NULL, `date` INTEGER NOT NULL, `median` REAL NOT NULL, `baseCalculo` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -292,7 +292,8 @@ class _$SelicForecastDao extends SelicForecastDao {
                   'id': item.id,
                   'meeting': _meetingModelTypeConverter.encode(item.meeting),
                   'date': _dateTimeConverter.encode(item.date),
-                  'median': item.median
+                  'median': item.median,
+                  'baseCalculo': item.baseCalculo
                 },
             changeListener);
 
@@ -313,16 +314,18 @@ class _$SelicForecastDao extends SelicForecastDao {
   }
 
   @override
-  Stream<List<SelicForecast>> getLastForecastByMeeting() {
+  Stream<List<SelicForecast>> getLastForecastByMeeting(MeetingModel meeting) {
     return _queryAdapter.queryListStream(
-        'SELECT * from selic_forecast sf where date = (SELECT max(date) as maxDate from  selic_forecast) group by meeting',
+        'SELECT * from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting > ?1  order by  meeting asc',
         mapper: (Map<String, Object?> row) => SelicForecast(
             id: row['id'] as int?,
             meeting:
                 _meetingModelTypeConverter.decode(row['meeting'] as String),
             date: _dateTimeConverter.decode(row['date'] as int),
+            baseCalculo: row['baseCalculo'] as int,
             median: row['median'] as double),
-        queryableName: 'selic_forecast',
+        arguments: [_meetingModelTypeConverter.encode(meeting)],
+        queryableName: 'SelicForecast',
         isView: false);
   }
 

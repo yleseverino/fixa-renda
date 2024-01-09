@@ -24,7 +24,7 @@ class _SelicForecastService implements SelicForecastService {
   @override
   Future<SelicForecastListDto> getSelicForecastFromCentralBank({
     String? filter,
-    String select = 'Data,Reuniao,Mediana',
+    String select = 'Data,Reuniao,Mediana,baseCalculo',
     String format = 'json',
     String top = '100',
   }) async {
