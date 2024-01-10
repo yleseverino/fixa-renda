@@ -25,6 +25,7 @@ SelicForecastDto _$SelicForecastDtoFromJson(Map<String, dynamic> json) =>
       Data: DateTime.parse(json['Data'] as String),
       Reuniao: json['Reuniao'] as String,
       Mediana: (json['Mediana'] as num).toDouble(),
+      baseCalculo: json['baseCalculo'] as int,
     );
 
 Map<String, dynamic> _$SelicForecastDtoToJson(SelicForecastDto instance) =>
@@ -32,4 +33,5 @@ Map<String, dynamic> _$SelicForecastDtoToJson(SelicForecastDto instance) =>
       'Data': instance.Data.toIso8601String(),
       'Reuniao': instance.Reuniao,
       'Mediana': instance.Mediana,
+      'baseCalculo': instance.baseCalculo,
     };

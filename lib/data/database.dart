@@ -15,7 +15,7 @@ import 'package:fixa_renda/data/investment/investment_entity.dart';
 part 'database.g.dart';
 
 @Database(
-  version: 3,
+  version: 2,
   entities: [Investment, Selic, SelicForecast],
 )
 abstract class AppDatabase extends FloorDatabase {
