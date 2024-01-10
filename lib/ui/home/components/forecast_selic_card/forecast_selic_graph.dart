@@ -1,18 +1,21 @@
+import 'package:fixa_renda/ui/home/components/forecast_selic_card/forecast_graph_ui_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class LineChartSample2 extends StatefulWidget {
-  final List<String> listLabels;
-  final List<double> listValues;
-  final List<String> listMonths;
-  const LineChartSample2({super.key, required this.listLabels, required this.listValues, required this.listMonths});
+class ForecastSelicGraph extends StatefulWidget {
+  final List<ForecastGraphUiModel> forecastGraphUiModel;
+  const ForecastSelicGraph({super.key, required this.forecastGraphUiModel});
 
   @override
-  State<LineChartSample2> createState() => _LineChartSample2State();
+  State<ForecastSelicGraph> createState() => _ForecastSelicGraphState();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
+class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
   double touchedValue = -1;
+
+  late final List<String> listMonths = widget.forecastGraphUiModel.map((e) => e.month).toList();
+  late final List<double> listValues = widget.forecastGraphUiModel.map((e) => e.value).toList();
+  late final List<String> listLabels = widget.forecastGraphUiModel.map((e) => e.label).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +45,14 @@ class _LineChartSample2State extends State<LineChartSample2> {
     );
     Widget text;
 
-    final String? label = widget.listMonths[value.toInt()];
-    if (label != null) {
+    try {
+      final String label = listMonths[value.toInt()];
       text = Text(label, style: style);
-    } else {
-      text = const Text('', style: style);
+    } on RangeError {
+      text = Container();
     }
+
+
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -109,7 +114,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
 
               return LineTooltipItem(
-                '${widget.listLabels[flSpot.x.toInt()]}\n',
+                '${listLabels[flSpot.x.toInt()]}\n',
                 TextStyle(
                   color: Theme.of(context).colorScheme.onTertiaryContainer,
                 ),
@@ -147,7 +152,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
           HorizontalLine(
             y: 1.8,
             color: Theme.of(context).colorScheme.tertiary,
-            strokeWidth: 3,
+            strokeWidth: 1,
             dashArray: [20, 10],
           ),
         ],
@@ -184,13 +189,13 @@ class _LineChartSample2State extends State<LineChartSample2> {
         show: false,
       ),
       minX: 0,
-      maxX: 8,
+      maxX: widget.forecastGraphUiModel.length.toDouble() - 1,
       minY: 7.5,
       maxY: 12,
       lineBarsData: [
         LineChartBarData(
           isStepLineChart: true,
-          spots: widget.listValues
+          spots: listValues
               .asMap()
               .entries
               .map((e) {
@@ -222,9 +227,9 @@ class _LineChartSample2State extends State<LineChartSample2> {
             show: true,
             getDotPainter: (spot, percent, barData, index) {
               return FlDotSquarePainter(
-                size: 12,
+                size: 6,
                 color: Colors.white,
-                strokeWidth: 3,
+                strokeWidth: 2,
                 strokeColor: Theme.of(context).colorScheme.secondary,
               );
             },

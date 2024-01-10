@@ -18,4 +18,7 @@ class SelicForecast {
       required this.date,
       required this.baseCalculo,
       required this.median});
+
+
+
 }

@@ -13,7 +13,7 @@ abstract class SelicForecastDao {
   Future<double?> getSelicAverage(String meeting);
 
   @Query(
-      "SELECT * from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting > :meeting  order by  meeting asc")
+      "SELECT * from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting >= :meeting group by meeting  order by  meeting asc limit 8")
   Stream<List<SelicForecast>> getLastForecastByMeeting(MeetingModel meeting);
 
   @Query("SELECT max(date) from SelicForecast sf ")

@@ -2,12 +2,17 @@ import 'package:fixa_renda/data/selic_forecast/api/selic_forecast_service.dart';
 import 'package:fixa_renda/data/selic_forecast/models/meeting_model.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_dao.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_entity.dart';
+import 'package:fixa_renda/ui/home/components/forecast_selic_card/forecast_graph_ui_model.dart';
 
 bool alreadyUpdated = false;
 
 class SelicForecastRepository {
   final SelicForecastDao _selicForecastDao;
   final SelicForecastService _forecastService;
+  final double _selicAtual = 11.75;
+  final MeetingModel _nextMeeting = MeetingModel(meeting: 1, year: 2024);
+
+  double get selicAtual => _selicAtual;
 
   SelicForecastRepository(
       {required SelicForecastDao selicForecastDao,
@@ -38,7 +43,7 @@ class SelicForecastRepository {
     }
   }
 
-  Stream<List<SelicForecast>> getLastForecast(MeetingModel meetingModel) {
-    return _selicForecastDao.getLastForecastByMeeting(meetingModel);
+  Stream<List<SelicForecast>> getLastForecast() {
+    return _selicForecastDao.getLastForecastByMeeting(_nextMeeting);
   }
 }

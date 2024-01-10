@@ -1,5 +1,16 @@
 import 'package:floor/floor.dart';
 
+final monthsMeeting = {
+  1: '',
+  2: 'Mar',
+  3: '',
+  4: 'Jun',
+  5: '',
+  6: 'Sep',
+  7: '',
+  8: 'Dec',
+};
+
 class MeetingModel {
   final int meeting;
   final int year;
@@ -12,6 +23,10 @@ class MeetingModel {
         meeting: int.parse(list[0].replaceAll('R', "")),
         year: int.parse(list[1]));
   }
+
+  String get month => monthsMeeting[meeting] ?? '';
+
+  String get label => '$meeting/$year';
 }
 
 class MeetingModelTypeConverter extends TypeConverter<MeetingModel, String> {

@@ -1,6 +1,7 @@
 import 'package:fixa_renda/data/selic_forecast/api/selic_forecast_service.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_repository.dart';
 import 'package:fixa_renda/ui/help/help_screen.dart';
+import 'package:fixa_renda/ui/home/components/forecast_selic_card/forecast_selic_card.dart';
 import 'package:fixa_renda/ui/home/components/forecast_selic_card/forecast_selic_graph.dart';
 import 'package:fixa_renda/ui/investment_item/investment_edit_screen.dart';
 import 'package:fixa_renda/util/datetime_extension.dart';
@@ -70,67 +71,28 @@ class MyHomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Previsão da taxa Selic',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const LineChartSample2(
-                          listMonths: [
-                            '',
-                            'Mar',
-                            '',
-                            'Jun',
-                            '',
-                            'Sep',
-                            '',
-                            'Dec',
-                            '',
-                          ],
-                          listValues: [
-                            11.75,
-                            11.25,
-                            10.75,
-                            10.25,
-                            9.75,
-                            9.25,
-                            9.0,
-                            8.75,
-                            8.5
-                          ],
-                          listLabels: [
-                            'Selic atual',
-                            'Reunião 1/2023',
-                            'Reunião 2/2023',
-                            'Reunião 3/2023',
-                            'Reunião 4/2023',
-                            'Reunião 5/2023',
-                            'Reunião 6/2023',
-                            'Reunião 7/2023',
-                            'Reunião 8/2023'
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Copom (${DateTime.now().toBRDate()})',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                StreamBuilder(
+                  stream: context.read<HomeViewModel>().forecast,
+                  builder: (context, snapshot) {
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    if (snapshot.hasError) {
+                      return const Text('Erro ao carregar investimentos');
+                    }
+
+                    if (snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('Nenhum investimento cadastrado'));
+                    }
+
+                    return  ForecastSelicCard(
+                      forecastDate: DateTime.now(),
+                      forecastGraphUiModel: snapshot.data!,
+                    );
+                  }
                 ),
                 StreamBuilder(
                     stream: context.read<HomeViewModel>().investments,

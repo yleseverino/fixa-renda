@@ -316,7 +316,7 @@ class _$SelicForecastDao extends SelicForecastDao {
   @override
   Stream<List<SelicForecast>> getLastForecastByMeeting(MeetingModel meeting) {
     return _queryAdapter.queryListStream(
-        'SELECT * from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting > ?1  order by  meeting asc',
+        'SELECT * from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting >= ?1 group by meeting  order by  meeting asc limit 8',
         mapper: (Map<String, Object?> row) => SelicForecast(
             id: row['id'] as int?,
             meeting:
