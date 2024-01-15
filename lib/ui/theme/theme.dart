@@ -5,7 +5,7 @@ import 'color_schemes.g.dart';
 
 ThemeData getThemeData(BuildContext context, bool isDarkMode) => ThemeData(
     useMaterial3: true,
-    cardTheme: const CardTheme(
+    cardTheme: CardTheme(
       shape: BeveledRectangleBorder(
         borderRadius: BorderRadius.only(
             topRight: Radius.circular(12), bottomLeft: Radius.circular(12)),

@@ -34,9 +34,7 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
               top: 24,
               bottom: 12,
             ),
-            child: LineChart(
-                // mainData(),
-                avgData()),
+            child: LineChart(data()),
           ),
         ),
       ],
@@ -89,7 +87,7 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
     return Text(text, style: style, textAlign: TextAlign.left);
   }
 
-  LineChartData avgData() {
+  LineChartData data() {
     return LineChartData(
       lineTouchData: LineTouchData(
         getTouchedSpotIndicator:
@@ -103,9 +101,9 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
               FlDotData(getDotPainter: (spot, percent, barData, index) {
                 return FlDotSquarePainter(
                   size: 16,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.primary,
                   strokeWidth: 5,
-                  strokeColor: Theme.of(context).colorScheme.secondary,
+                  strokeColor: Theme.of(context).colorScheme.onPrimary,
                 );
               }),
             );
