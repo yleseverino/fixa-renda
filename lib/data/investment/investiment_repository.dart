@@ -30,7 +30,7 @@ class InvestmentRepository {
         final profit = await getInvestmentProfit(investment);
         final profit6months = await getInvestmentProfit6Months(investment);
         investmentsUi.add(InvestmentUiModel.fromInvestment(
-            investment, profit, profit + profit6months));
+            investment, profit,  profit6months));
       }
       yield investmentsUi;
     }
@@ -113,7 +113,9 @@ class InvestmentRepository {
 
       final futureValue =
           investment.investedAmount * (pow(1 + investimentRate, numberMonths));
-      final profit = futureValue - investment.investedAmount;
+      final profit6months = futureValue - investment.investedAmount;
+
+      final profit = ( await _posFixateInvestiment(investment)) + profit6months;
 
       return profit;
     } on SelicRateNotFound {

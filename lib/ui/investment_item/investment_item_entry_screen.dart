@@ -2,7 +2,6 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:fixa_renda/data/database.dart';
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
 import 'package:fixa_renda/data/retrofit_services.dart';
-import 'package:fixa_renda/data/selic/api/selic_service.dart';
 import 'package:fixa_renda/data/selic/selic_repository.dart';
 import 'package:fixa_renda/data/selic_forecast/models/meeting_model.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_repository.dart';
@@ -32,7 +31,7 @@ class _InvestmentItemEntryScreenState extends State<InvestmentItemEntryScreen> {
           create: (context) => SelicRepository(
               selicDao:
                   Provider.of<AppDatabase>(context, listen: false).selicDao,
-              selicService: Provider.of<SelicService>(context, listen: false)),
+              selicService: Provider.of<RetrofitServices>(context, listen: false).selicService),
         ),
         Provider<SelicForecastRepository>(
           create: (context) => SelicForecastRepository(

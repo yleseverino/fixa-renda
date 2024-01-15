@@ -27,6 +27,9 @@ class SelicForecastRepository {
   MeetingModel get nextMeeting => _nextMeeting;
 
   Future<void> updateForecast() async {
+    if (alreadyUpdated) {
+      return;
+    }
     int? lastDate;
     try {
       lastDate = await _selicForecastDao.getLastDate();
@@ -45,6 +48,7 @@ class SelicForecastRepository {
     for (final forecastDto in values.value) {
       await _selicForecastDao.insertSelic(forecastDto.toEntity());
     }
+    alreadyUpdated = true;
   }
 
   Stream<List<SelicForecast>> getLastForecast() {
