@@ -7,16 +7,20 @@ import 'package:fixa_renda/data/investment/investment_entity.dart';
 import 'package:fixa_renda/data/investment/models/investiment_ui_model.dart';
 import 'package:fixa_renda/data/investment/models/selic_rate_model.dart';
 import 'package:fixa_renda/data/selic/selic_repository.dart';
+import 'package:fixa_renda/data/selic_forecast/selic_forecast_repository.dart';
 
 class InvestmentRepository {
   final InvestmentDao _investmentDao;
   final SelicRepository _selicRepository;
+  final SelicForecastRepository _selicForecastRepository;
 
   InvestmentRepository(
       {required InvestmentDao investmentDao,
-      required SelicRepository selicRepository})
+      required SelicRepository selicRepository,
+      required SelicForecastRepository selicForecastRepository})
       : _investmentDao = investmentDao,
-        _selicRepository = selicRepository;
+        _selicRepository = selicRepository,
+        _selicForecastRepository = selicForecastRepository;
 
   Stream<List<InvestmentUiModel>> getInvestments() async* {
     final investmentsSteam = _investmentDao.getInvestments();
@@ -24,9 +28,10 @@ class InvestmentRepository {
       final List<InvestmentUiModel> investmentsUi = [];
       for (final investment in investments) {
         final profit = await getInvestmentProfit(investment);
-        investmentsUi.add(InvestmentUiModel.fromInvestment(investment, profit));
+        final profit6months = await getInvestmentProfit6Months(investment);
+        investmentsUi.add(InvestmentUiModel.fromInvestment(
+            investment, profit, profit + profit6months));
       }
-
       yield investmentsUi;
     }
   }
@@ -61,14 +66,13 @@ class InvestmentRepository {
     return await _posFixateInvestiment(investment);
   }
 
-  double _preFixateInvestiment(Investment investment) {
+  double _preFixateInvestiment(Investment investment, {DateTime? currentDate}) {
+    final date = currentDate ?? DateTime.now();
     final rateByDay =
         (pow((1 + (investment.interestRate / 100)), (1 / 252)) - 1);
 
-    print(rateByDay * 100);
     final period =
-        (DateTime.now().difference(investment.date).inDays * (252 / 365))
-            .toInt();
+        (date.difference(investment.date).inDays * (252 / 365)).toInt();
 
     final futureValue = investment.investedAmount * pow(1 + rateByDay, period);
     return futureValue - investment.investedAmount;
@@ -82,6 +86,33 @@ class InvestmentRepository {
 
       final futureValue = investment.investedAmount *
           (pow(1 + investimentRate, selicRate.countDays));
+      final profit = futureValue - investment.investedAmount;
+
+      return profit;
+    } on SelicRateNotFound {
+      return 0;
+    }
+  }
+
+  Future<double> getInvestmentProfit6Months(Investment investment) async {
+    if (investment.incomeType == InvestmentIncomeType.preFixed) {
+      return _preFixateInvestiment(investment,
+          currentDate: DateTime.now().add(const Duration(days: 180)));
+    }
+    return await _posFixateInvestimentFutureCDI(investment, 4);
+  }
+
+  Future<double> _posFixateInvestimentFutureCDI(
+      Investment investment, int numberOfMeetings) async {
+    try {
+      final numberMonths = numberOfMeetings * 1.5;
+      final selicRateYear =
+          await _selicForecastRepository.getSelicAverage(numberOfMeetings);
+      final selicMonth = pow((1 + selicRateYear), 1 / 12) - 1;
+      final investimentRate = (investment.interestRate / 100) * selicMonth;
+
+      final futureValue =
+          investment.investedAmount * (pow(1 + investimentRate, numberMonths));
       final profit = futureValue - investment.investedAmount;
 
       return profit;

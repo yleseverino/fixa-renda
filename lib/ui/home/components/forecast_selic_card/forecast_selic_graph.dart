@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class ForecastSelicGraph extends StatefulWidget {
   final List<ForecastGraphUiModel> forecastGraphUiModel;
+
   const ForecastSelicGraph({super.key, required this.forecastGraphUiModel});
 
   @override
@@ -13,9 +14,12 @@ class ForecastSelicGraph extends StatefulWidget {
 class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
   double touchedValue = -1;
 
-  late final List<String> listMonths = widget.forecastGraphUiModel.map((e) => e.month).toList();
-  late final List<double> listValues = widget.forecastGraphUiModel.map((e) => e.value).toList();
-  late final List<String> listLabels = widget.forecastGraphUiModel.map((e) => e.label).toList();
+  late final List<String> listMonths =
+      widget.forecastGraphUiModel.map((e) => e.month).toList();
+  late final List<double> listValues =
+      widget.forecastGraphUiModel.map((e) => e.value).toList();
+  late final List<String> listLabels =
+      widget.forecastGraphUiModel.map((e) => e.label).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +56,9 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
       text = Container();
     }
 
-
+    if (value == (widget.forecastGraphUiModel.length - 1)) {
+      text = Container();
+    }
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -111,8 +117,6 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
             return touchedBarSpots.map((barSpot) {
               final flSpot = barSpot;
 
-
-
               return LineTooltipItem(
                 '${listLabels[flSpot.x.toInt()]}\n',
                 TextStyle(
@@ -140,6 +144,7 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
             });
             return;
           }
+
           final value = lineTouch.lineBarSpots![0].x;
 
           setState(() {
@@ -182,7 +187,10 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
           sideTitles: SideTitles(showTitles: false),
         ),
         rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false,  reservedSize: 50,),
+          sideTitles: SideTitles(
+            showTitles: false,
+            reservedSize: 50,
+          ),
         ),
       ),
       borderData: FlBorderData(
@@ -195,10 +203,7 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
       lineBarsData: [
         LineChartBarData(
           isStepLineChart: true,
-          spots: listValues
-              .asMap()
-              .entries
-              .map((e) {
+          spots: listValues.asMap().entries.map((e) {
             return FlSpot(e.key.toDouble(), e.value);
           }).toList(),
           isCurved: false,

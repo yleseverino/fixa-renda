@@ -1,15 +1,13 @@
+import 'package:fixa_renda/data/investment/models/investiment_ui_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fixa_renda/util/num_extension.dart';
 
 class InvestmentCard extends StatelessWidget {
-  final String title;
-  final num investedValue;
-  final num grossIncome;
-  const InvestmentCard(
-      {super.key,
-      required this.title,
-      required this.investedValue,
-      required this.grossIncome});
+  final InvestmentUiModel investmentUiModel;
+  const InvestmentCard({
+    super.key,
+    required this.investmentUiModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,27 +38,60 @@ class InvestmentCard extends StatelessWidget {
             ]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(title, style: Theme.of(context).textTheme.bodyLarge!),
+              child: Text(investmentUiModel.name,
+                  style: Theme.of(context).textTheme.bodyLarge!),
             ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text('Valor investido:'),
-              Text(
-                investedValue.toCurrency(),
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Valor investido:'),
+                    Text(
+                      investmentUiModel.valueInvested.toCurrency(),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-              ),
-            ]),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text('Rendimento bruto:'),
-              Text(
-                grossIncome.toCurrency(),
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                  ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Rendimento bruto:'),
+                    Text(
+                      investmentUiModel.profit.toCurrency(),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                     ),
-              ),
-            ]),
+                  ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Estimado 6 meses'),
+                        Text('rendimento bruto',
+                            style: Theme.of(context).textTheme.bodySmall!),
+                      ],
+                    ),
+                    Text(
+                      investmentUiModel.profit6months.toCurrency(),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ]),
+            ),
           ],
         ),
       ),

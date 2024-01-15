@@ -24,6 +24,14 @@ class MeetingModel {
         year: int.parse(list[1]));
   }
 
+  MeetingModel addMeeting(int meeting) {
+    if (this.meeting + meeting > 8) {
+      final meetingAdjust = this.meeting + meeting - 8;
+      return MeetingModel(meeting: meetingAdjust, year: this.year + 1);
+    }
+    return MeetingModel(meeting: this.meeting + meeting, year: this.year);
+  }
+
   String get month => monthsMeeting[meeting] ?? '';
 
   String get label => '$meeting/$year';

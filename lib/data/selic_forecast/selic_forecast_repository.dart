@@ -2,25 +2,29 @@ import 'package:fixa_renda/data/selic_forecast/api/selic_forecast_service.dart';
 import 'package:fixa_renda/data/selic_forecast/models/meeting_model.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_dao.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_entity.dart';
-import 'package:fixa_renda/ui/home/components/forecast_selic_card/forecast_graph_ui_model.dart';
 
 bool alreadyUpdated = false;
 
 class SelicForecastRepository {
   final SelicForecastDao _selicForecastDao;
   final SelicForecastService _forecastService;
-  final double _selicAtual = 11.75;
-  final MeetingModel _nextMeeting = MeetingModel(meeting: 1, year: 2024);
-
-  double get selicAtual => _selicAtual;
+  final double _selicAtual;
+  final MeetingModel _nextMeeting;
 
   SelicForecastRepository(
       {required SelicForecastDao selicForecastDao,
-      required SelicForecastService forecastService})
+      required SelicForecastService forecastService,
+      required double selicAtual,
+      required MeetingModel nextMeeting})
       : _selicForecastDao = selicForecastDao,
-        _forecastService = forecastService {
+        _forecastService = forecastService,
+        _selicAtual = selicAtual,
+        _nextMeeting = nextMeeting {
     updateForecast();
   }
+
+  double get selicAtual => _selicAtual;
+  MeetingModel get nextMeeting => _nextMeeting;
 
   Future<void> updateForecast() async {
     int? lastDate;
@@ -45,5 +49,14 @@ class SelicForecastRepository {
 
   Stream<List<SelicForecast>> getLastForecast() {
     return _selicForecastDao.getLastForecastByMeeting(_nextMeeting);
+  }
+
+  Future<double> getSelicAverage(int numberFutureMeeting) async {
+    final averageRate = await _selicForecastDao.getSelicAverageBetweenMeetings(
+        _nextMeeting, _nextMeeting.addMeeting(numberFutureMeeting));
+    if (averageRate == null) {
+      return 0;
+    }
+    return averageRate / 100;
   }
 }

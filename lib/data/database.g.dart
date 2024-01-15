@@ -306,11 +306,17 @@ class _$SelicForecastDao extends SelicForecastDao {
   final InsertionAdapter<SelicForecast> _selicForecastInsertionAdapter;
 
   @override
-  Future<double?> getSelicAverage(String meeting) async {
+  Future<double?> getSelicAverageBetweenMeetings(
+    MeetingModel greaterMeeting,
+    MeetingModel lessMeeting,
+  ) async {
     return _queryAdapter.query(
-        'SELECT * from SelicForecast sf where meeting = ?1 order by date desc limit 1',
+        'SELECT AVG(sf.median) from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting >= ?1 and meeting <= ?2',
         mapper: (Map<String, Object?> row) => row.values.first as double,
-        arguments: [meeting]);
+        arguments: [
+          _meetingModelTypeConverter.encode(greaterMeeting),
+          _meetingModelTypeConverter.encode(lessMeeting)
+        ]);
   }
 
   @override

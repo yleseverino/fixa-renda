@@ -175,7 +175,7 @@ class _InvestmentItemContentState extends State<InvestmentItemContent> {
                                 value: value,
                                 child: Text(
                                   value.description,
-                                  style: Theme.of(context).textTheme!.bodyLarge,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               );
                             }).toList(),

@@ -4,14 +4,15 @@ import 'package:fixa_renda/util/datetime_extension.dart';
 import 'package:flutter/material.dart';
 
 class ForecastSelicCard extends StatelessWidget {
-  final DateTime forecastDate;
+  final double selic;
   final List<ForecastGraphUiModel> forecastGraphUiModel;
 
-  const ForecastSelicCard({super.key, required this.forecastDate, required this.forecastGraphUiModel});
+  const ForecastSelicCard(
+      {super.key, required this.forecastGraphUiModel, required this.selic});
 
   @override
   Widget build(BuildContext context) {
-    return                 Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -30,13 +31,20 @@ class ForecastSelicCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 ForecastSelicGraph(
-                  forecastGraphUiModel: forecastGraphUiModel,
+                ForecastSelicGraph(
+                  forecastGraphUiModel: [
+                    ForecastGraphUiModel(
+                        label: 'Selic Atual',
+                        value: selic,
+                        month: '',
+                        lastDate: DateTime.now()),
+                    ...forecastGraphUiModel
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Relatório Focus (${forecastDate.toBRDate()})',
+                    'Relatório Focus (${forecastGraphUiModel.first.lastDate.toBRDate()})',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
