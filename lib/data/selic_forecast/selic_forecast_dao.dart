@@ -5,7 +5,7 @@ import 'package:floor/floor.dart';
 @dao
 abstract class SelicForecastDao {
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertSelic(SelicForecast selic);
+  Future<void> insertSelic(List<SelicForecast> selics);
 
   @Query(
       "SELECT AVG(sf.median) from SelicForecast sf where date = (SELECT max(date) as maxDate from  SelicForecast) and baseCalculo = 0 and meeting >= :greaterMeeting and meeting <= :lessMeeting")

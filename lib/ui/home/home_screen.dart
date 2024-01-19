@@ -50,8 +50,10 @@ class MyHomePage extends StatelessWidget {
               selicRepository:
                   Provider.of<SelicRepository>(context, listen: false)),
         ),
-        Provider<HomeViewModel>(
+        ChangeNotifierProvider<HomeViewModel>(
             create: (context) => HomeViewModel(
+                selicRepository: Provider.of<SelicRepository>(context,
+                    listen: false),
                 selicForecastRepository: Provider.of<SelicForecastRepository>(
                     context,
                     listen: false),
@@ -60,7 +62,6 @@ class MyHomePage extends StatelessWidget {
       ],
       builder: (context, _) => Scaffold(
         appBar: AppBar(
-          // title: const Text('Investimentos'),
           actions: [
             IconButton(
               onPressed: () {
@@ -101,8 +102,9 @@ class MyHomePage extends StatelessWidget {
                       );
                     }),
                 StreamBuilder(
-                    stream: context.read<HomeViewModel>().investments,
+                    stream: context.watch<HomeViewModel>().investments,
                     builder: (context, snapshot) {
+                      context.read<HomeViewModel>().updateSelic();
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       }

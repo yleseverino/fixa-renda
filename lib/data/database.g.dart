@@ -342,9 +342,9 @@ class _$SelicForecastDao extends SelicForecastDao {
   }
 
   @override
-  Future<void> insertSelic(SelicForecast selic) async {
-    await _selicForecastInsertionAdapter.insert(
-        selic, OnConflictStrategy.replace);
+  Future<void> insertSelic(List<SelicForecast> selics) async {
+    await _selicForecastInsertionAdapter.insertList(
+        selics, OnConflictStrategy.replace);
   }
 }
 

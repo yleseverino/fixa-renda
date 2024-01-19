@@ -3,8 +3,6 @@ import 'package:fixa_renda/data/selic_forecast/models/meeting_model.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_dao.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_entity.dart';
 
-bool alreadyUpdated = false;
-
 class SelicForecastRepository {
   final SelicForecastDao _selicForecastDao;
   final SelicForecastService _forecastService;
@@ -19,17 +17,13 @@ class SelicForecastRepository {
       : _selicForecastDao = selicForecastDao,
         _forecastService = forecastService,
         _selicAtual = selicAtual,
-        _nextMeeting = nextMeeting {
-    updateForecast();
-  }
+        _nextMeeting = nextMeeting {}
 
   double get selicAtual => _selicAtual;
+
   MeetingModel get nextMeeting => _nextMeeting;
 
   Future<void> updateForecast() async {
-    if (alreadyUpdated) {
-      return;
-    }
     int? lastDate;
     try {
       lastDate = await _selicForecastDao.getLastDate();
@@ -42,13 +36,12 @@ class SelicForecastRepository {
       lastDateSelic = DateTime.fromMillisecondsSinceEpoch(lastDate);
     }
 
-    final values = await _forecastService.getSelicForecastFromCentralBank(
+    final forecastDto = await _forecastService.getSelicForecastFromCentralBank(
         filter: formatFilterDateGreaterThan(lastDateSelic));
 
-    for (final forecastDto in values.value) {
-      await _selicForecastDao.insertSelic(forecastDto.toEntity());
-    }
-    alreadyUpdated = true;
+    final entityList = forecastDto.value.map((e) => e.toEntity()).toList();
+
+    await _selicForecastDao.insertSelic(entityList);
   }
 
   Stream<List<SelicForecast>> getLastForecast() {
