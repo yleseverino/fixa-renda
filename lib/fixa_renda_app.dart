@@ -28,9 +28,8 @@ class FixaRendaApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: getThemeData(context, false),
+        theme: getThemeData(context, true),
         debugShowCheckedModeBanner: false,
-        darkTheme: getThemeData(context, true),
         home: const MyHomePage(),
         routes: <String, WidgetBuilder>{
           InvestmentItemEditScreen.routeName: (BuildContext context) =>
