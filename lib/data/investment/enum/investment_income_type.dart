@@ -1,7 +1,7 @@
 import 'package:floor/floor.dart';
 
 enum InvestmentIncomeType {
-  posFixed("Pós-Fixado"),
+  posFixed("Pós-Fixado atrelado ao CDI"),
   preFixed("Pré-Fixado");
 
   final String description;
