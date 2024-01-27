@@ -17,7 +17,7 @@ class SelicForecastRepository {
       : _selicForecastDao = selicForecastDao,
         _forecastService = forecastService,
         _selicAtual = selicAtual,
-        _nextMeeting = nextMeeting {}
+        _nextMeeting = nextMeeting;
 
   double get selicAtual => _selicAtual;
 

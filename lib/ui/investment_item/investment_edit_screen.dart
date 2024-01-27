@@ -4,13 +4,11 @@ import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:fixa_renda/data/investment/investiment_repository.dart';
 import 'package:fixa_renda/data/investment/investment_entity.dart';
 import 'package:fixa_renda/data/retrofit_services.dart';
-import 'package:fixa_renda/data/selic/api/selic_service.dart';
 import 'package:fixa_renda/data/selic/selic_repository.dart';
 import 'package:fixa_renda/data/selic_forecast/models/meeting_model.dart';
 import 'package:fixa_renda/data/selic_forecast/selic_forecast_repository.dart';
 import 'package:fixa_renda/ui/investment_item/components/investment_item_content.dart';
 import 'package:fixa_renda/ui/investment_item/investment_edit_view_model.dart';
-import 'package:fixa_renda/ui/investment_item/investment_item_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

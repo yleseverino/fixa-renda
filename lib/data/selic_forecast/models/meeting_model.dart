@@ -27,9 +27,9 @@ class MeetingModel {
   MeetingModel addMeeting(int meeting) {
     if (this.meeting + meeting > 8) {
       final meetingAdjust = this.meeting + meeting - 8;
-      return MeetingModel(meeting: meetingAdjust, year: this.year + 1);
+      return MeetingModel(meeting: meetingAdjust, year: year + 1);
     }
-    return MeetingModel(meeting: this.meeting + meeting, year: this.year);
+    return MeetingModel(meeting: this.meeting + meeting, year: year);
   }
 
   String get month => monthsMeeting[meeting] ?? '';

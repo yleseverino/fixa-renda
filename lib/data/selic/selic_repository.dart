@@ -11,8 +11,7 @@ class SelicRepository {
   SelicRepository(
       {required SelicDao selicDao, required SelicService selicService})
       : _selicDao = selicDao,
-        _selicService = selicService {
-  }
+        _selicService = selicService;
 
   Future<double?> getSelicAverage(DateTime date) async {
     try {

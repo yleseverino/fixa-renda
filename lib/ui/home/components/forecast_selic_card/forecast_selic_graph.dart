@@ -122,7 +122,7 @@ class _ForecastSelicGraphState extends State<ForecastSelicGraph> {
                 ),
                 children: [
                   TextSpan(
-                    text: flSpot.y.toString() + ' %',
+                    text: '${flSpot.y} %',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
