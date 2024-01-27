@@ -33,9 +33,6 @@ class HomeViewModel extends ChangeNotifier {
     }
     await _selicForecastRepository.updateForecast();
     await _selicRepository.getSelicDataFromCentralBank();
-    // investments = _investmentRepository.getInvestments();
-    // forecast = _selicForecastRepository.getLastForecast().map((event) =>
-    //     event.map((e) => ForecastGraphUiModel.fromEntity(e)).toList());
     _updateSelic = true;
   }
 }
