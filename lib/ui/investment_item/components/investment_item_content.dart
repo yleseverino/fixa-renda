@@ -175,7 +175,7 @@ class _InvestmentItemContentState extends State<InvestmentItemContent> {
                                 value: value,
                                 child: Text(
                                   value.description,
-                                  style: Theme.of(context).textTheme!.bodyLarge,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               );
                             }).toList(),
@@ -196,9 +196,9 @@ class _InvestmentItemContentState extends State<InvestmentItemContent> {
             color: Theme.of(context).colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.shadow,
-                blurRadius: 4,
-                offset: const Offset(0, -2),
+                color: Theme.of(context).colorScheme.primary,
+                blurRadius: 1,
+                offset: const Offset(0, 0),
               ),
             ],
           ),

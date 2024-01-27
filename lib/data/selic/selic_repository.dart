@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:fixa_renda/data/selic/api/selic_service.dart';
 import 'package:fixa_renda/data/selic/selic_dao.dart';
 
-bool alreadyUpdated = false;
+
 
 class SelicRepository {
   final SelicDao _selicDao;
@@ -11,9 +11,7 @@ class SelicRepository {
   SelicRepository(
       {required SelicDao selicDao, required SelicService selicService})
       : _selicDao = selicDao,
-        _selicService = selicService {
-    getSelicDataFromCentralBank();
-  }
+        _selicService = selicService;
 
   Future<double?> getSelicAverage(DateTime date) async {
     try {
@@ -34,10 +32,6 @@ class SelicRepository {
   }
 
   Future<void> getSelicDataFromCentralBank() async {
-    if (alreadyUpdated) {
-      return;
-    }
-
     int? lastDate;
     try {
       lastDate = await _selicDao.getLastDate();
@@ -49,11 +43,10 @@ class SelicRepository {
     } else {
       lastDateSelic = DateTime.fromMillisecondsSinceEpoch(lastDate);
     }
-
     final today = DateTime.now();
     final formatDate = DateFormat('dd/MM/yyyy');
 
-    final selicListDto = await _selicService.getSelicAverage(
+    final selicListDto = await _selicService.getSelicFromCentralBank(
         startDate: formatDate.format(lastDateSelic),
         endDate: formatDate.format(today));
 
@@ -63,7 +56,5 @@ class SelicRepository {
     for (final selic in selicList) {
       await _selicDao.insertSelic(selic);
     }
-
-    alreadyUpdated = true;
   }
 }

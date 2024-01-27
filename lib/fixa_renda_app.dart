@@ -1,21 +1,19 @@
+import 'package:fixa_renda/data/database.dart';
+import 'package:fixa_renda/data/retrofit_services.dart';
 import 'package:fixa_renda/ui/help/help_screen.dart';
+import 'package:fixa_renda/ui/home/home_screen.dart';
 import 'package:fixa_renda/ui/investment_item/investment_edit_screen.dart';
+import 'package:fixa_renda/ui/investment_item/investment_item_entry_screen.dart';
 import 'package:fixa_renda/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:fixa_renda/data/database.dart';
-import 'package:fixa_renda/data/selic/api/selic_service.dart';
-import 'package:fixa_renda/ui/home/home_screen.dart';
-import 'package:fixa_renda/ui/investment_item/investment_item_entry_screen.dart';
-import 'package:fixa_renda/ui/theme/color_schemes.g.dart';
-import 'package:fixa_renda/ui/theme/type_scheme.dart';
 import 'package:provider/provider.dart';
 
 class FixaRendaApp extends StatelessWidget {
   final AppDatabase appDatabase;
-  final SelicService selicService;
+  final RetrofitServices retrofitServices;
 
   const FixaRendaApp(
-      {super.key, required this.appDatabase, required this.selicService});
+      {super.key, required this.appDatabase, required this.retrofitServices});
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +22,14 @@ class FixaRendaApp extends StatelessWidget {
         Provider<AppDatabase>(
           create: (context) => appDatabase,
         ),
-        Provider<SelicService>(
-          create: (context) => selicService,
+        Provider<RetrofitServices>(
+          create: (context) => retrofitServices,
         ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: getThemeData(context, false),
+        debugShowCheckedModeBanner: false,
         darkTheme: getThemeData(context, true),
         home: const MyHomePage(),
         routes: <String, WidgetBuilder>{

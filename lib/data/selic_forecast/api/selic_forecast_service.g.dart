@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'selic_service.dart';
+part of 'selic_forecast_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,12 +8,13 @@ part of 'selic_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _SelicService implements SelicService {
-  _SelicService(
+class _SelicForecastService implements SelicForecastService {
+  _SelicForecastService(
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11';
+    baseUrl ??=
+        'https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoSelic';
   }
 
   final Dio _dio;
@@ -21,28 +22,31 @@ class _SelicService implements SelicService {
   String? baseUrl;
 
   @override
-  Future<List<SelicDTO>> getSelicFromCentralBank({
-    required String startDate,
-    required String endDate,
+  Future<SelicForecastListDto> getSelicForecastFromCentralBank({
+    String? filter,
+    String select = 'Data,Reuniao,Mediana,baseCalculo',
     String format = 'json',
+    String top = '100',
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'dataInicial': startDate,
-      r'dataFinal': endDate,
-      r'formato': format,
+      r'filter': filter,
+      r'$select': select,
+      r'$format': format,
+      r'$top': top,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    const  Map<String, dynamic>? _data = null;
-    final _result =
-        await _dio.fetch<List<dynamic>>(_setStreamType<List<SelicDTO>>(Options(
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SelicForecastListDto>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/dados',
+              '',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -51,9 +55,7 @@ class _SelicService implements SelicService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    var value = _result.data!
-        .map((dynamic i) => SelicDTO.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = SelicForecastListDto.fromJson(_result.data!);
     return value;
   }
 

@@ -2,7 +2,7 @@ import 'package:fixa_renda/data/investment/enum/investment_income_type.dart';
 import 'package:floor/floor.dart';
 import 'package:fixa_renda/data/util/datetime_converter.dart';
 
-@TypeConverters([DateTimeConverter])
+@TypeConverters([DateTimeConverter, InvestmentIncomeTypeConverter])
 @entity
 class Investment {
   @PrimaryKey(autoGenerate: true)
